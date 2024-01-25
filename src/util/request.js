@@ -1,4 +1,5 @@
 import axios from "axios";
+import Cookies from "js-cookie";
 const http = axios.create({
     //通用请求地址，请求前缀
     baseURL: '/api',
@@ -7,6 +8,8 @@ const http = axios.create({
 // 添加请求拦截器
 http.interceptors.request.use(function (config) {
     // 在发送请求之前做些什么
+    const token = Cookies.get('token')
+    config.headers.token = token ? token : 0
     return config;
 }, function (error) {
 

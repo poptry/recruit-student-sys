@@ -19,7 +19,7 @@
                       <el-input type="password" v-model="form.password" placeholder="请输入密码"></el-input>
                   </el-form-item>
                   <el-form-item>
-                    <el-radio-group v-model="form.resource">
+                    <el-radio-group v-model="form.identity">
                       <el-radio label="游客"></el-radio>
                       <el-radio label="用户"></el-radio>
                       <el-radio label="管理员"></el-radio>
@@ -71,6 +71,7 @@
 import Cookie from 'js-cookie'
 import '@/assets/css/login.css'
 import {userLogin,userRegister,check} from '@/api'
+import { mapMutations } from 'vuex'
 export default {
   data() {
     var checkPassword = (rule, value, callback) => {
@@ -85,7 +86,8 @@ export default {
       return {
         form:{
             username:'',
-            password:''
+            password:'',
+            identity:'用户'
           }, 
           rules:{
               username:[{required:true,message: '请输入用户名', trigger: 'blur' }],
@@ -108,27 +110,43 @@ export default {
       }
     },
     methods:{
+      ...mapMutations('user',['getIsVisitor']),
+      randomNum(){
+        return Math.floor(10000 + Math.random() * 90000);
+      },
       submit(){
+        let num = this.randomNum()
+        if(this.form.identity === '游客'){
+          Cookie.set('identity',"visitor")
+          Cookie.set('username',`游客${num}`)
+          //存储在Vuex
+          this.getIsVisitor(true)
+          this.$router.push('home')
+        }
+        //校验通过
+        this.$refs.form.validate((valid)=>{
           //校验通过
-          this.$refs.form.validate((valid)=>{
-              //校验通过
-              if(valid){
-                userLogin(this.form).then(({data})=>{
-                  // console.log(data);
-                  // 判断code是不是20000
-                  if(data.code == '001'){
-                      Cookie.set('token',data.data.token)
-                      //获取菜单的数据，存入store
-                      // this.$store.commit('setMenu',data.data.menu)
-                      // this.$store.commit('addMenu',this.$router)
-                        //跳转到首页
-                        this.$router.push('/home')
-                  }else {
-                      this.$message.error(data.data.message);
-                  }
-                })
+          if(valid){
+            userLogin(this.form).then(({data})=>{
+              console.log(data);
+              // 判断code是不是20000
+              if(data.code == '200'){
+                  Cookie.set('token',data.data.token)
+                  Cookie.set('username',this.form.username)
+                  Cookie.set('userId',data.data.userId)
+                  //如果有游客cookie清楚掉
+                  Cookie.remove('identity')
+                  //获取菜单的数据，存入store
+                  // this.$store.commit('setMenu',data.data.menu)
+                  // this.$store.commit('addMenu',this.$router)
+                    //跳转到首页
+                    this.$router.push('/home')
+              }else {
+                  this.$message.error(data.msg);
               }
-          })       
+            })
+          }
+        })       
       },
       submitRegister(){
         if(this.hasRegister){
@@ -149,7 +167,7 @@ export default {
       },
       checkUserName(){
         check({user_name:this.registerInfo.username}).then(res=>{
-          if(res.data.code == '004'){
+          if(res.data.code == '400'){
             this.hasRegister = true
             this.$notify.error({
               title: '错误',

@@ -9,3 +9,7 @@ export const userRegister = (data)=>{
 export const check = (data)=>{
     return http.post('/user/check',data)
 }
+//获取推荐信息
+export const getRecommandInfo = (data)=>{
+    return http.post('/recruit/recommend/infoList',data)
+}

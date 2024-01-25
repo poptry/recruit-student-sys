@@ -2,7 +2,7 @@
 export default {
     namespaced:true,
     state:{
-
+        isVisitor:false
     },
     getters:{
 
@@ -11,6 +11,8 @@ export default {
 
     },
     mutations:{
-
+        getIsVisitor(state,status){
+            state.isVisitor = status
+        }
     }
 }
