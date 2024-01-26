@@ -13,3 +13,13 @@ export const check = (data)=>{
 export const getRecommandInfo = (data)=>{
     return http.post('/recruit/recommend/infoList',data)
 }
+//获取收藏列表
+export const getCollectInfo = (data)=>{
+    return http.post('/collect/collectList',data)
+}
+export const removeCollect = (data)=>{
+    return http.post('/collect/removeCollect',data)
+}
+export const addCollect = (data)=>{
+    return http.post('/collect/addCollect',data)
+}

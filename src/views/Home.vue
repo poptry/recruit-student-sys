@@ -15,7 +15,7 @@
       <span  class="advanced-search" @click="toAdvancedSearch">高级检索></span>
     </div>
     <div v-if="!isVisitor" class="recommand">
-      <div v-for="(r,index) in recommandInfo" :key="index" class="card">
+      <div v-for="(r,index) in recommandInfo" :key="index" class="card" @click="toDetail(r)">
         <h3>{{ r.title}}</h3>
         <p class="content">{{ r.content }}</p>
         <el-row><el-col :span="6"><i class="iconfont icon-xuexiao_xuexiaoxinxi"></i><span>学校:</span></el-col><el-col :span="18"><span>{{r.school}}</span></el-col></el-row>
@@ -78,6 +78,9 @@ export default {
     toAdvancedSearch(){
       
     },
+    toDetail(r){
+      this.$router.push({path:'/detailContent',query:{info:JSON.stringify(r)}}).catch(err=>err)
+    },
     //前往登录界面
     toLogin(){
       this.$router.push('login')
@@ -89,7 +92,7 @@ export default {
     if(identity != 'visitor'){
       this.isVisitor = false
       getRecommandInfo({user_id:userId}).then((data)=>{
-        console.log(data);
+        console.log(JSON.stringify(data.data.data));
         this.recommandInfo = data.data.data
         this.recommandInfo.forEach(ele=>{
           ele.date = formatDateTime(ele.date)
@@ -107,6 +110,7 @@ export default {
     position: relative;
     width: 100%;
     height: 100%;
+    margin-top: 40px;
   }
   .recommand{
     width: 100%;

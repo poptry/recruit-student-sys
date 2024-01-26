@@ -38,7 +38,6 @@ export default {
 }
 .el-header {
     padding: 0;
-    margin-bottom: 40px;
     height: 20%;
 }
 .el-main{

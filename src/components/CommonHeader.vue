@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <div class="sysName">
-        <span>招生信息检索系统</span>
+        <span style="cursor: pointer;" @click="toHome">招生信息检索系统</span>
     </div>
     <div class="user">
         <span v-if="isVisitor" class="toLogin" @click="toLogin">登录</span>
@@ -42,23 +42,22 @@ export default {
         },
         //下拉菜单事件
         handleCommand(command){
-            if(command==2){
+            if(command == 1){
+                this.$router.push('personal')
+            }else if(command == 2){
                 Cookie.remove('username')
                 Cookie.remove('token')
                 this.$router.push('login')
             }
+        },
+        toHome(){
+            this.$router.push('/home').catch(err=>err)
         }
     },
     created(){
         this.username = Cookie.get('username')
         const identity = Cookie.get('identity')
         if(identity == 'visitor'){
-            this.userMenu = [
-                {
-                    id:2,
-                    name:'退出登录'
-                }
-            ]
             this.isVisitor = true
         }
     }

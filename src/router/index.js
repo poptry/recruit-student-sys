@@ -5,6 +5,10 @@ Vue.use(VueRouter)
 import Login from '@/views/Login'
 import Main from '@/views/Main'
 import Home from '@/views/Home'
+import Personal from '@/views/Personal'
+import UserManage from '@/views/UserManage'
+import DetailContent from '@/views/DetailContent'
+import CollectManage from '@/views/CollectManage'
 //组件和路由映射
 const routes = [
     {path:'/login',component:Login,name:'login'},
@@ -14,7 +18,18 @@ const routes = [
         name:'Main',
         redirect: '/home',//重定向
         children: [
-            {path:'home',component:Home,name:'home'}
+            {path:'home',component:Home,name:'home'},
+            {
+                path:'personal',
+                component:Personal,
+                children:[
+                    {path:'/',redirect:'userManage'},//我的信息
+                    {path:'userManage',component:UserManage,name:'userManage'},
+                    {path:'collectManage',component:CollectManage,name:'collectManage'},
+                ]
+            },
+            {path:'detailContent',component:DetailContent,name:'detailContent'},
+
         ]
       },
 ]
