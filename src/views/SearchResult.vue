@@ -18,7 +18,7 @@
             <el-button icon="el-icon-search"></el-button>
         </div>
         <div class="advancedSearch">
-            <el-button class="advanced"><a href="#/advancedSearch" target="_blank" style="text-decoration: none;color: inherit;">高级检索</a></el-button>
+            <a href="#/advancedSearch" target="_blank" style="text-decoration: none;" class="advanced">高级检索</a>
         </div>
     </div>
     <result-table :tableData="tableData"></result-table>
@@ -87,14 +87,12 @@ export default {
             }
             .advancedSearch{
                 position: absolute;
-                top: 25px;
+                top: 32px;
                 left: calc(120px + 60%);
                 .advanced{
-                    background-color: #e1e1e1;
                     color: #333;
                     &:hover{
-                        background-color: #0076dd;
-                        color: #fff;
+                        color: #3da1f8;
                     }
                 }
             }

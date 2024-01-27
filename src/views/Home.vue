@@ -1,7 +1,7 @@
 <template>
   <div class="contain">
     <div class="search">
-      <el-input placeholder="请输入内容" v-model="input" class="input-with-select">
+      <el-input placeholder="请输入内容" @keyup.enter.native="search" v-model="input" class="input-with-select">
         <el-select v-model="select" slot="prepend" placeholder="请选择">
           <el-option
               v-for="item in options"
@@ -10,7 +10,7 @@
               :value="item.value">
             </el-option>
         </el-select>
-        <el-button slot="append" icon="el-icon-search"></el-button>
+        <el-button slot="append" icon="el-icon-search" @click="search"></el-button>
       </el-input>
       <span  class="advanced-search" @click="toAdvancedSearch">高级检索></span>
     </div>
@@ -76,7 +76,10 @@ export default {
   methods:{
     //前往高级检索界面
     toAdvancedSearch(){
-      
+      this.$router.push('/advancedSearch')
+    },
+    search(){
+      this.$router.push({path:'/searchResult',query:{input:this.input}})
     },
     toDetail(r){
       this.$router.push({path:'/detailContent',query:{info:JSON.stringify(r)}}).catch(err=>err)
