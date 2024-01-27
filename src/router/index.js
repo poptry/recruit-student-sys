@@ -9,6 +9,8 @@ import Personal from '@/views/Personal'
 import UserManage from '@/views/UserManage'
 import DetailContent from '@/views/DetailContent'
 import CollectManage from '@/views/CollectManage'
+import SearchResult from '@/views/SearchResult'
+import AdvancedSearch from '@/views/AdvancedSearch'
 //组件和路由映射
 const routes = [
     {path:'/login',component:Login,name:'login'},
@@ -29,7 +31,8 @@ const routes = [
                 ]
             },
             {path:'detailContent',component:DetailContent,name:'detailContent'},
-
+            {path:'searchResult',component:SearchResult,name:'searchResult'},
+            {path:'advancedSearch',component:AdvancedSearch,name:'advancedSearch'},
         ]
       },
 ]

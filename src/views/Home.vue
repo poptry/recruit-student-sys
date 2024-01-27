@@ -93,6 +93,7 @@ export default {
       this.isVisitor = false
       getRecommandInfo({user_id:userId}).then((data)=>{
         console.log(JSON.stringify(data.data.data));
+        console.log(data.data.data);
         this.recommandInfo = data.data.data
         this.recommandInfo.forEach(ele=>{
           ele.date = formatDateTime(ele.date)
