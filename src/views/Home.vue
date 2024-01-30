@@ -41,31 +41,31 @@ export default {
   data(){
     return{
       input:'',
-      select:'标题',
+      select:'title',
       options:[
         {
-          value:'标题',
+          value:'title',
           label:'标题'
         },
         {
-          value:'全文',
+          value:'content',
           label:'全文'
         }
         ,
         {
-          value:'地区',
+          value:'city',
           label:'地区'
         },
         {
-          value:'学校',
+          value:'school',
           label:'学校'
         },
         {
-          value:'专业',
+          value:'specialized',
           label:'专业'
         },
         {
-          value:'学院',
+          value:'academy',
           label:'学院'
         }
       ],
@@ -78,9 +78,11 @@ export default {
     toAdvancedSearch(){
       this.$router.push('/advancedSearch')
     },
+    //搜索事件
     search(){
-      this.$router.push({path:'/searchResult',query:{input:this.input}})
+      this.$router.push({path:'/searchResult',query:{input:this.input,select:this.select}})
     },
+    //推荐点击
     toDetail(r){
       this.$router.push({path:'/detailContent',query:{info:JSON.stringify(r)}}).catch(err=>err)
     },
@@ -95,8 +97,6 @@ export default {
     if(identity != 'visitor'){
       this.isVisitor = false
       getRecommandInfo({user_id:userId}).then((data)=>{
-        console.log(JSON.stringify(data.data.data));
-        console.log(data.data.data);
         this.recommandInfo = data.data.data
         this.recommandInfo.forEach(ele=>{
           ele.date = formatDateTime(ele.date)

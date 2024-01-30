@@ -38,50 +38,63 @@
   </template>
   
   <script>
-  import ResultTable from '@/components/ResultTable.vue'
-  import VDistpicker from 'v-distpicker'
-  export default {
-      data(){
-          return{
-            tableData:[{"school":"厦门理工学院","city":"厦门","academy":"机械学院","specialized":null,"title":"厦门理工学院机械工程学位点2024年硕士研究生招生计划","content":"1.机械工程(学术学位，专业代码：0802)\r\n\r\n涵盖本科毕业专业：机械设计制造及自动化、机械电子工程、机械设计及理论、智能制造工程、车辆工程、智能车辆工程、新能源汽车工程、汽车服务工程、过程装备与控制工程、测控技术与仪器、材料成型与控制工程、工程力学、交通运输、智慧交通、自动化、计算机科学与技术，或机械类相关工科专业。","date":"2023-09-18T16:00:00.000+00:00","type":"研究生","url":"https://yjs.xmut.edu.cn/info/1073/4060.htm","document_id":2}],
-            conditions:{
-                academy:'',
-                city:'',
-                school:'',
-                specialized:'',
-                title:'',
-                type:'',
-                content:'',
-                date:'',
-            },
-            region:{
-                province:'北京市',
-                city:''
-            }
+import ResultTable from '@/components/ResultTable.vue'
+import VDistpicker from 'v-distpicker'
+import {formatDateTime} from '@/util/tools.js'
+import {advancedSearch} from '@/api'
+export default {
+    data(){
+        return{
+        tableData:[],
+        conditions:{
+            academy:'',
+            city:'',
+            school:'',
+            specialized:'',
+            title:'',
+            type:'',
+            content:'',
+        },
+        region:{
+            province:'',
+            city:''
         }
-      },
-      components:{ResultTable,VDistpicker},
-      methods:{
-        resetForm(formName) {
-            this.$refs[formName].resetFields();
-            this.select = {
-                province:'',
-                city:''
+    }
+    },
+    components:{ResultTable,VDistpicker},
+    methods:{
+    //重置表单
+    resetForm(formName) {
+        this.$refs[formName].resetFields();
+        this.select = {
+            province:'',
+            city:''
+        }
+    },
+    //地址选择
+    onChange(data){
+        if(data.province.value!="省"&&data.city.value!="市"){
+            this.region.province = data.province.value
+            this.region.city = data.city.value
+        }
+    },
+    //搜索
+    submit(){
+        this.conditions.city  = `${this.region.province}${this.region.city}`
+        advancedSearch({searchMap:this.conditions}).then(res=>{
+            console.log(res);
+            if(res.data.code == '200'){
+                this.tableData = res.data.data
+                this.tableData.forEach(ele=>{
+                    ele.date = formatDateTime(ele.date)
+                })
+            }else if(res.data.code == '400'){
+                this.tableData = []
             }
-        },
-        //地址选择
-        onChange(data){
-            if(data.province.value!="省"&&data.city.value!="市"){
-                this.region.province = data.province.value
-                this.region.city = data.city.value
-            }
-        },
-        //搜索
-        submit(){
-            console.log(this.conditions,this.region);
-        },
-      }
-  }
+        })
+    },
+    }
+}
   </script>
   <style lang="less" scoped>
       .container{
@@ -110,5 +123,6 @@
                 }
               }
           }
+
       }
   </style>

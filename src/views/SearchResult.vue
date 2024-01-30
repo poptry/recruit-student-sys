@@ -13,9 +13,10 @@
             <el-input
             placeholder="请输入内容"
             v-model="input"
+            @keyup.enter.native="$router.replace({path:'/searchResult',query:{input:input,select:select}}).catch(err=>err)" 
             clearable>
             </el-input>
-            <el-button icon="el-icon-search"></el-button>
+            <el-button icon="el-icon-search" @click="$router.replace({path:'/searchResult',query:{input:input,select:select}}).catch(err=>err)"></el-button>
         </div>
         <div class="advancedSearch">
             <a href="#/advancedSearch" target="_blank" style="text-decoration: none;" class="advanced">高级检索</a>
@@ -27,44 +28,79 @@
 
 <script>
 import ResultTable from '@/components/ResultTable.vue'
+import {formatDateTime} from '@/util/tools.js'
+import {normalSearch} from '@/api'
 export default {
     data(){
         return{
             input:'',
-            select:'标题',
+            select:'title',
             options:[
                 {
-                    value:'标题',
+                    value:'title',
                     label:'标题'
                 },
                 {
-                    value:'全文',
+                    value:'content',
                     label:'全文'
                 }
                 ,
                 {
-                    value:'地区',
+                    value:'city',
                     label:'地区'
                 },
                 {
-                    value:'学校',
+                    value:'school',
                     label:'学校'
                 },
                 {
-                    value:'专业',
+                    value:'specialized',
                     label:'专业'
                 },
                 {
-                    value:'学院',
+                    value:'academy',
                     label:'学院'
                 }
             ],
-            tableData:[{"school":"厦门理工学院","city":"厦门","academy":"机械学院","specialized":null,"title":"厦门理工学院机械工程学位点2024年硕士研究生招生计划","content":"1.机械工程(学术学位，专业代码：0802)\r\n\r\n涵盖本科毕业专业：机械设计制造及自动化、机械电子工程、机械设计及理论、智能制造工程、车辆工程、智能车辆工程、新能源汽车工程、汽车服务工程、过程装备与控制工程、测控技术与仪器、材料成型与控制工程、工程力学、交通运输、智慧交通、自动化、计算机科学与技术，或机械类相关工科专业。","date":"2023-09-18T16:00:00.000+00:00","type":"研究生","url":"https://yjs.xmut.edu.cn/info/1073/4060.htm","document_id":2},{"school":"厦门理工学院","city":"厦门","academy":"艺术学院","specialized":null,"title":"厦门理工学院机艺术学位点2024年硕士研究生招生计划","content":"涵盖本科毕业专业：不限专业","date":"2023-09-18T16:00:00.000+00:00","type":"研究生","url":"https://yjs.xmut.edu.cn/info/1073/4060.htm","document_id":3}]
+            tableData:[]
         }
     },
     components:{ResultTable},
+    watch: {
+        '$route.query': {
+            handler(newQuery, oldQuery) {
+                this.input = newQuery.input;
+                this.select = newQuery.select;
+                console.log(this.input,this.select);
+                // 参数变化时的逻辑处理 执行一次数据重载
+                this.searchMethod()
+            },
+            immediate: true, // 立即执行一次，以处理初始参数
+        },
+    },
     methods:{
-        
+        async searchMethod(){
+            await normalSearch({
+                name:this.select,
+                key:this.input
+            }).then(res=>{
+                if(res.data.code == '200'){
+                    this.tableData = res.data.data
+                    this.tableData.forEach(ele=>{
+                        ele.date = formatDateTime(ele.date)
+                    })
+                }else if(res.data.code == '400'){
+                    this.tableData = []
+                }
+            })
+        }
+    },
+    created(){
+        // //使用this.$route.query来获取传递过来的参数
+        // this.input = this.$route.query.input;
+        // this.select = this.$route.query.select;
+        // // console.log(this.input,this.select);
+        // this.searchMethod()
     }
 }
 </script>

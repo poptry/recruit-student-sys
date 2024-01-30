@@ -23,3 +23,10 @@ export const removeCollect = (data)=>{
 export const addCollect = (data)=>{
     return http.post('/collect/addCollect',data)
 }
+//搜素接口
+export const normalSearch = (data)=>{
+    return http.post('/esSearch/normalSearch',data)
+}
+export const advancedSearch = (data)=>{
+    return http.post('/esSearch/plusSearch',data)
+}

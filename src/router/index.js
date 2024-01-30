@@ -11,6 +11,7 @@ import DetailContent from '@/views/DetailContent'
 import CollectManage from '@/views/CollectManage'
 import SearchResult from '@/views/SearchResult'
 import AdvancedSearch from '@/views/AdvancedSearch'
+import RecruitManage from '@/views/RecruitManage'
 //组件和路由映射
 const routes = [
     {path:'/login',component:Login,name:'login'},
@@ -28,6 +29,7 @@ const routes = [
                     {path:'/',redirect:'userManage'},//我的信息
                     {path:'userManage',component:UserManage,name:'userManage'},
                     {path:'collectManage',component:CollectManage,name:'collectManage'},
+                    {path:'recruitManage',component:RecruitManage,name:'recruitManage'},
                 ]
             },
             {path:'detailContent',component:DetailContent,name:'detailContent'},

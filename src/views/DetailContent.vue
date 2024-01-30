@@ -1,8 +1,10 @@
 <template>
   <div class="container">
     <el-row class="top">
-        <el-col :span="12"> <span class="back" @click="goback">&lt; 返回</span> </el-col>
-        <el-col :span="12" class="collect"><i style="font-size: 20px;" :class="{ 'el-icon-star-on': isCollect, 'el-icon-star-off': !isCollect }"  @click="collect"></i><span  @click="collect"> 收藏</span> </el-col>
+        <el-col :span="12"> <span class="back" style="user-select: none;" @click="goback">&lt; 返回</span> </el-col>
+        <el-col :span="12" class="collect">
+            <i style="font-size: 20px;" :class="{ 'el-icon-star-on': isCollect, 'el-icon-star-off': !isCollect }"  @click="collect"></i>
+            <span  @click="collect" style="user-select: none;"> 收藏</span> </el-col>
     </el-row>
     <div class="article">
         <div class="title">
@@ -48,12 +50,14 @@ export default {
                     this.$notify.success({
                         title: '提示',
                         offset: 100,
+                        duration:1000,
                         message: '收藏成功'
                     });
                 }else if(res.data.code == '400'){
                     this.$notify.error({
                         title: '提示',
                         offset: 100,
+                        duration:1000,
                         message: '已经收藏过了'
                     });
                 }
