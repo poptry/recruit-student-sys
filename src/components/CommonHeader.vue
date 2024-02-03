@@ -47,7 +47,7 @@ export default {
             }else if(command == 2){
                 Cookie.remove('username')
                 Cookie.remove('token')
-                this.$router.push('login')
+                this.$router.push('/login')
             }
         },
         toHome(){

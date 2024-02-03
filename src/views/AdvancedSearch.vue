@@ -41,6 +41,7 @@
 import ResultTable from '@/components/ResultTable.vue'
 import VDistpicker from 'v-distpicker'
 import {formatDateTime} from '@/util/tools.js'
+import {highlight} from '@/util/highllight.js'
 import {advancedSearch} from '@/api'
 export default {
     data(){
@@ -82,11 +83,11 @@ export default {
     submit(){
         this.conditions.city  = `${this.region.province}${this.region.city}`
         advancedSearch({searchMap:this.conditions}).then(res=>{
-            console.log(res);
             if(res.data.code == '200'){
                 this.tableData = res.data.data
                 this.tableData.forEach(ele=>{
                     ele.date = formatDateTime(ele.date)
+                    ele.title = highlight(ele.title,this.conditions.title)
                 })
             }else if(res.data.code == '400'){
                 this.tableData = []

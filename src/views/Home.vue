@@ -50,11 +50,14 @@ export default {
         {
           value:'content',
           label:'全文'
-        }
-        ,
+        },
+        {
+          value:'province',
+          label:'省份'
+        },
         {
           value:'city',
-          label:'地区'
+          label:'城市'
         },
         {
           value:'school',
@@ -96,6 +99,7 @@ export default {
     const identity = Cookies.get('identity')
     if(identity != 'visitor'){
       this.isVisitor = false
+      //获取推荐
       getRecommandInfo({user_id:userId}).then((data)=>{
         this.recommandInfo = data.data.data
         this.recommandInfo.forEach(ele=>{

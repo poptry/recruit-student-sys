@@ -30,6 +30,7 @@
 import ResultTable from '@/components/ResultTable.vue'
 import {formatDateTime} from '@/util/tools.js'
 import {normalSearch} from '@/api'
+import {highlight} from '@/util/highllight.js'
 export default {
     data(){
         return{
@@ -37,29 +38,32 @@ export default {
             select:'title',
             options:[
                 {
-                    value:'title',
-                    label:'标题'
+                value:'title',
+                label:'标题'
                 },
                 {
-                    value:'content',
-                    label:'全文'
-                }
-                ,
-                {
-                    value:'city',
-                    label:'地区'
+                value:'content',
+                label:'全文'
                 },
                 {
-                    value:'school',
-                    label:'学校'
+                value:'province',
+                label:'省份'
                 },
                 {
-                    value:'specialized',
-                    label:'专业'
+                value:'city',
+                label:'城市'
                 },
                 {
-                    value:'academy',
-                    label:'学院'
+                value:'school',
+                label:'学校'
+                },
+                {
+                value:'specialized',
+                label:'专业'
+                },
+                {
+                value:'academy',
+                label:'学院'
                 }
             ],
             tableData:[]
@@ -71,7 +75,6 @@ export default {
             handler(newQuery, oldQuery) {
                 this.input = newQuery.input;
                 this.select = newQuery.select;
-                console.log(this.input,this.select);
                 // 参数变化时的逻辑处理 执行一次数据重载
                 this.searchMethod()
             },
@@ -88,6 +91,7 @@ export default {
                     this.tableData = res.data.data
                     this.tableData.forEach(ele=>{
                         ele.date = formatDateTime(ele.date)
+                        ele[this.select] = highlight(ele[this.select],this.input)
                     })
                 }else if(res.data.code == '400'){
                     this.tableData = []
@@ -95,13 +99,6 @@ export default {
             })
         }
     },
-    created(){
-        // //使用this.$route.query来获取传递过来的参数
-        // this.input = this.$route.query.input;
-        // this.select = this.$route.query.select;
-        // // console.log(this.input,this.select);
-        // this.searchMethod()
-    }
 }
 </script>
 <style lang="less" scoped>

@@ -30,3 +30,26 @@ export const normalSearch = (data)=>{
 export const advancedSearch = (data)=>{
     return http.post('/esSearch/plusSearch',data)
 }
+
+
+//个人中心管理
+//获取表格
+export const getRecruitInfo = (data)=>{
+    return http.post('/recruit/list',data)
+}
+//添加招生信息
+export const addRecruitInfo = (data)=>{
+    return http.post('/recruit/addRecruitInfo',data)
+}
+//删除招生信息
+export const deleteRecruitInfo = (data)=>{
+    return http.post('/recruit/remRecruitInfo',data)
+}
+//修改招生信息
+export const updateRecruitInfo = (data)=>{
+    return http.post('/recruit/updateRecruitInfo',data)
+}
+//搜索招生信息->关键词检索
+export const findRecruitInfo = (data)=>{
+    return http.post('/recruit/findRecruitInfo',data)
+}

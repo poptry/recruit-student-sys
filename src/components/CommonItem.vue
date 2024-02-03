@@ -47,12 +47,12 @@
         align="center"
         width="80"  
         label="操作">
-            <template slot-scope="scope">
-            <div style="display: flex; justify-content:space-evenly">
-                <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
-            </div>
-            </template>
-        </el-table-column>
+          <template slot-scope="scope">
+          <div style="display: flex; justify-content:space-evenly">
+              <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
+          </div>
+          </template>
+      </el-table-column>
     </el-table>
     <el-row>
       <el-pagination
@@ -94,17 +94,17 @@ export default {
         type: 'warning'
       }).then(async ()=>{
           await removeCollect({collect_id:row.collectId}).then(res=>{
-          if(res.data.code == '200'){
-            this.$message({
-              type: 'success',
-              message: res.data.msg
-            }); 
-            //重新获取表格数据
-            this.getAllCollectInfo()
-            //页面归到第一页
-            this.paging.currentPage = 1
-          }
-        })
+            if(res.data.code == '200'){
+              this.$message({
+                type: 'success',
+                message: res.data.msg
+              }); 
+              //重新获取表格数据
+              this.getAllCollectInfo()
+              //页面归到第一页
+              this.paging.currentPage = 1
+            }
+          })
       }).catch(()=>{
         this.$message({
           type: 'info',
@@ -123,7 +123,6 @@ export default {
           //置空数组
           this.tableData = []
           let collectList = res.data.data
-          console.log(collectList);
           collectList.forEach(ele=>{
             ele.document.collectId = ele.collect_id
             ele.document.date = formatDateTime(ele.document.date)
@@ -137,7 +136,6 @@ export default {
     //换展示条数
     handleSizeChange(val) {
       this.paging.pagesize = val
-      console.log(this.paging.pagesize);
     },
     //点击换页
     handleCurrentChange(currentPage){
