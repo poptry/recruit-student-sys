@@ -55,6 +55,7 @@ export default {
             title:'',
             type:'',
             content:'',
+            province:''
         },
         region:{
             province:'',
@@ -81,7 +82,8 @@ export default {
     },
     //搜索
     submit(){
-        this.conditions.city  = `${this.region.province}${this.region.city}`
+        this.conditions.city  = this.region.city
+        this.conditions.province = this.region.province
         advancedSearch({searchMap:this.conditions}).then(res=>{
             if(res.data.code == '200'){
                 this.tableData = res.data.data

@@ -92,6 +92,7 @@ export default {
     },
     methods:{
         clickTitle(row){
+            row.title = row.title.replace(/<\/?span[^>]*>/g, "");
             this.$router.push({path:'/detailContent',query:{info:JSON.stringify(row)}}).catch(err=>err)
         },
         //换展示条数
@@ -122,6 +123,7 @@ export default {
         .el-table{
             margin: 0 auto;
             width: 100%;
+
             .title{
                 &:hover{
                 color: rgb(37, 115, 249);
