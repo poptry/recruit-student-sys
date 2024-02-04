@@ -1,6 +1,7 @@
 <template>
     <div class="resultList">
         <el-table
+        v-loading="loading"
         :data="tableData.slice((paging.currentPage-1)*paging.pagesize,paging.currentPage*paging.pagesize)"
         stripe>
             <el-table-column
@@ -79,6 +80,7 @@
     </div>
 </template>
 <script>
+import { mapState } from 'vuex'
 export default {
     props:['tableData'],
     data(){
@@ -90,9 +92,11 @@ export default {
             },
         }
     },
+    computed:{
+        ...mapState('table',['loading'])
+    },
     methods:{
         clickTitle(row){
-            row.title = row.title.replace(/<\/?span[^>]*>/g, "");
             this.$router.push({path:'/detailContent',query:{info:JSON.stringify(row)}}).catch(err=>err)
         },
         //换展示条数
@@ -108,11 +112,10 @@ export default {
 </script>
 <style lang="less" scoped>
     .container{
-        width: 80%;
-        height: 100%;
+        width: 100%;
     }
     .resultList{
-        width: 80%;
+        width: 100%;
         padding: 20px;
         /deep/ .el-table__header{
             th{

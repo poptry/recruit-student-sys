@@ -15,14 +15,14 @@
       <span  class="advanced-search" @click="toAdvancedSearch">高级检索></span>
     </div>
     <div v-if="!isVisitor" class="recommand">
-      <div v-for="(r,index) in recommandInfo" :key="index" class="card" @click="toDetail(r)">
+      <div v-for="(r,index) in recommandInfo" :key="index" class="card animate__animated animate__zoomIn" @click="toDetail(r)">
         <h3>{{ r.title}}</h3>
         <p class="content">{{ r.content }}</p>
         <el-row><el-col :span="6"><i class="iconfont icon-xuexiao_xuexiaoxinxi"></i><span>学校:</span></el-col><el-col :span="18"><span>{{r.school}}</span></el-col></el-row>
         <el-row><el-col :span="6"><i class="iconfont icon-xueyuan"></i><span>学院:</span></el-col><el-col :span="18"><span>{{r.academy}}</span></el-col></el-row>
         <el-row><el-col :span="6"><i class="iconfont icon-leixing"></i><span>类型:</span></el-col><el-col :span="18"><span>{{r.type}}</span></el-col></el-row>
         <span class="time">{{ r.date }}</span>
-        <span class="city">{{ r.city }}</span>
+        <span class="city">{{ `${r.province}` + `${r.city}` }}</span>
       </div>
     </div>
     <div v-if="isVisitor" class="showVisitor">

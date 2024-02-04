@@ -43,6 +43,7 @@ import VDistpicker from 'v-distpicker'
 import {formatDateTime} from '@/util/tools.js'
 import {highlight} from '@/util/highllight.js'
 import {advancedSearch} from '@/api'
+import { mapMutations } from 'vuex'
 export default {
     data(){
         return{
@@ -63,8 +64,9 @@ export default {
         }
     }
     },
-    components:{ResultTable,VDistpicker},
-    methods:{
+components:{ResultTable,VDistpicker},
+methods:{
+    ...mapMutations('table',['isLoading']),
     //重置表单
     resetForm(formName) {
         this.$refs[formName].resetFields();
@@ -82,6 +84,7 @@ export default {
     },
     //搜索
     submit(){
+        this.isLoading(true)
         this.conditions.city  = this.region.city
         this.conditions.province = this.region.province
         advancedSearch({searchMap:this.conditions}).then(res=>{
@@ -94,6 +97,7 @@ export default {
             }else if(res.data.code == '400'){
                 this.tableData = []
             }
+            this.isLoading(false)
         })
     },
     }

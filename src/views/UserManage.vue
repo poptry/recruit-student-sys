@@ -19,32 +19,27 @@
       :data="tableData.slice((paging.currentPage-1)*paging.pagesize,paging.currentPage*paging.pagesize)"
       height="500">
       <el-table-column
-          type="selection"
-          align="center"
-          >
-      </el-table-column>
-      <el-table-column
-          prop="proId"
+          prop="user_id"
           align="center"
           label="用户ID">
       </el-table-column>
       <el-table-column
-          prop="proId"
+          prop="username"
           align="center"
           label="用户名">
       </el-table-column>
       <el-table-column
-          prop="proId"
+          prop="city"
           align="center"
           label="城市">
       </el-table-column>
       <el-table-column
-          prop="proId"
+          prop="phonenum"
           align="center"
           label="手机">
       </el-table-column>
       <el-table-column
-          prop="proId"
+          prop="auth"
           align="center"
           label="权限">
       </el-table-column>
@@ -54,7 +49,7 @@
       label="操作">
           <template slot-scope="scope">
           <div style="display: flex; justify-content:space-evenly">
-              <el-button size="mini" @click="handleEidt(scope.row)">编辑</el-button>
+              <el-button size="mini" @click="handleEdit(scope.row)">编辑</el-button>
               <el-button type="danger" size="mini" @click="handleDelete(scope.row)">删除</el-button>
           </div>
           </template>
@@ -84,43 +79,24 @@
       :visible.sync="dialogVisible"
       :show-close="false"
       width="50%">
-      <el-form label-width="80px" :inline="true" :rules="rules" ref="productList" :model="productList" class="demo-form-inline">
-        <el-form-item label="产品名称" prop="proName">
-          <el-input v-model="productList.proName" placeholder="产品名称"></el-input>
+      <el-form label-width="80px" :inline="true" :rules="rules" ref="userList" :model="userList" class="demo-form-inline">
+        <el-form-item label="用户名称" prop="username">
+          <el-input v-model="userList.username" placeholder="用户名称"></el-input>
         </el-form-item>
-        <el-form-item label="产品价格" prop="proPrice">
-          <el-input v-model="productList.proPrice" placeholder="产品价格"></el-input>
+        <el-form-item label="用户密码" prop="password">
+          <el-input v-model="userList.password" placeholder="产品价格"></el-input>
         </el-form-item>
-        <el-form-item label="产品标签" prop="proTag">
-          <el-select v-model="productList.proTag" placeholder="请选择产品标签来源">
-            <el-option label="新品" value="新品"></el-option>
-            <el-option label="定制" value="定制"></el-option>
-            <el-option label="库存" value="线上询价"></el-option>
+        <el-form-item label="手机号码" prop="phonenum">
+          <el-input v-model="userList.phonenum" placeholder="手机号码"></el-input>
+        </el-form-item>
+        <el-form-item label="权限" prop="auth">
+          <el-select v-model="userList.auth" placeholder="权限选择">
+            <el-option label="用户" value="用户">用户</el-option>
+            <el-option label="管理员" value="管理员">管理员</el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="产品状态" prop="proState">
-          <el-select v-model="productList.proState" placeholder="请选择产品状态来源">
-                          <el-option label="预售" value="预售"></el-option>
-            <el-option label="在售" value="在售"></el-option>
-            <el-option label="售罄" value="售罄"></el-option>
-            <el-option label="下架" value="下架"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="产品类型" prop="proType">
-          <el-select v-model="productList.proType" placeholder="请选择产品类型">
-            <el-option v-for="option in productTypes" :key="option.value" :label="option.label" :value="option.value"></el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="产品单位" prop="proUnit">
-          <el-input v-model="productList.proUnit" placeholder="产品单位"></el-input>
-        </el-form-item>
-        <el-form-item label="产品信息" prop="proInfo">
-          <el-input 
-          type="textarea" 
-          resize="none" 
-          :autosize="{ minRows: 4, maxRows: 4}" 
-          v-model="productList.proInfo" 
-          placeholder="产品信息"></el-input>
+        <el-form-item prop="" label="地区">
+          <v-distpicker :province="region.province" :city="region.city"  @change="onChange" hide-area></v-distpicker>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -132,13 +108,19 @@
 </template>
 
 <script>
+import {getUserList,updateUser,deleteUser} from '@/api'
+import VDistpicker from 'v-distpicker'
 export default {
   data() {
     return {
       //分页
       paging:{
-        pagesize:8,
+        pagesize:5,
         currentPage:1,
+      },
+      region:{
+        province:'',
+        city:''
       },
       //加载中
       loading:false,
@@ -151,27 +133,31 @@ export default {
       //checkbox
       selection:[],
       dialogVisible:false,
-      productList:
-        {
-          'proId': '',
-          'proInfo': '这是产品1的信息',
-          'proName': '产品1',
-          'proPrice': 100,
-          'proState': '在售',
-          'proTag': '',
-          'proType': '',
-          'proUnit': 'XYZ传感器',
-          'userId': ''
-        },
-      productTypes: [
-        { label: '湿度', value: '湿度' },
-      ],
+      userList:{
+        "user_id":'',
+        "username":"",
+        "password":"",
+        "phonenum":'',
+        "city":'',
+        province:'',
+        "auth":""
+      },
       rules:{
         proInfo:[{ required: true, message: '产品信息必填', trigger: 'blur' }],
       }
     }
   },
+  components:{VDistpicker},
   methods:{
+    //获取用户
+    async getUsers(){
+      await getUserList().then(res=>{
+        if(res.data.code == "200"){
+          this.tableData = res.data.data
+          console.log(JSON.stringify(this.tableData));
+        }
+      })
+    },
     //选择所有
     selectAll(selection){
       this.selection = selection
@@ -183,7 +169,6 @@ export default {
     //换展示条数
     handleSizeChange(val) {
       this.paging.pagesize = val
-      console.log(this.paging.pagesize);
     },
     //点击换页
     handleCurrentChange(currentPage){
@@ -195,11 +180,36 @@ export default {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then()
+      }).then(async ()=>{
+        deleteUser({user_id:row.user_id}).then(res=>{
+          if(res.data.code === "200"){
+            this.getUsers()
+            this.$message({
+              message: '删除成功',
+              type: 'success'
+            });
+          }else{
+            this.$message({
+              message: '删除失败',
+              type: 'info'
+            });
+          }
+        })
+      }).catch(()=>{
+        this.$message({
+          type: 'info',
+          message: '已取消删除'
+        });  
+      })
     },
     //编辑事件
-    handleEidt(row){
+    handleEdit(row){
       this.dialogVisible = true
+      this.$nextTick(()=>{
+        this.region.province = row.province
+        this.region.city = row.city
+        this.userList = {...row}
+      })
     },
     //搜索按钮事件
     subSearch(){
@@ -207,18 +217,39 @@ export default {
     //取消弹窗
     cancle(){
         //置空表单
-      this.$refs.productList.resetFields()
+      this.$refs.userList.resetFields()
       this.dialogVisible = false
+    },
+    //地址选择
+    onChange(data){
+      if(data.province.value!="省"&&data.city.value!="市"){
+        this.region.province = data.province.value
+        this.region.city = data.city.value
+      }
     },
     //确定弹窗
     submit(){
-      this.$refs.productList.validate((valid) => {
-        if (valid) {}})
+      this.$refs.userList.validate((valid) => {
+        if (valid) {
+          updateUser(this.userList).then((response)=>{
+              if(response.data.code == "200"){
+                this.getUsers()
+                this.$message({
+                  message: '更新成功',
+                  type: 'success'
+                });
+              }
+            })
+          this.$refs.userList.resetFields()
+          this.dialogVisible = false
+        }
+      })
     },
   },
   computed:{
   },
   created(){
+    this.getUsers()
   },
 }
 </script>

@@ -44,8 +44,20 @@
                   <el-form-item  label="手机号" prop="userphone">
                       <el-input v-model="registerInfo.userphone" placeholder="请输入手机号"></el-input>
                   </el-form-item>
-                  <el-form-item  label="验证码" prop="usercode">
-                      <el-input v-model="registerInfo.usercode" placeholder="请输入验证码"></el-input>
+                  <!-- <el-form-item  label="验证码" prop="usercode">
+                    <el-row>
+                      <el-col :span="16">
+                        <el-input style="width:100%" v-model="registerInfo.usercode" placeholder="请输入验证码"></el-input>
+                      </el-col>
+                      <el-col :span="6">
+                        <span style="width: 100%;" class="getCode" @click="getCode">{{time}}</span>
+                      </el-col>
+                    </el-row>
+                  </el-form-item> -->
+                  <el-form-item class="code"  label="验证码" prop="usercode">
+                    <el-input style="width:100%" v-model="registerInfo.usercode" placeholder="请输入验证码">
+                      <el-button  class="getCode" @click="getCode" slot="append">{{time}}</el-button>
+                    </el-input>
                   </el-form-item>
                   <el-form-item label="密码" prop="password">
                       <el-input type="password" v-model="registerInfo.password" placeholder="请输入密码"></el-input>
@@ -72,6 +84,7 @@ import Cookie from 'js-cookie'
 import '@/assets/css/login.css'
 import {userLogin,userRegister,check} from '@/api'
 import { mapMutations } from 'vuex'
+import {sendMsg} from '@/api'
 export default {
   data() {
     var checkPassword = (rule, value, callback) => {
@@ -183,6 +196,34 @@ export default {
       },
       toLogin(){
         this.registerState = false
+      },
+      // 注册获取验证码
+      async getCode(){
+        //验证手机号格式
+        if(!(/^1[3456789]\d{9}$/.test(this.registerInfo.userphone))){
+            this.$message.error('请输入正确的手机号');
+            return false;
+        }
+        this.btndisabled = true
+        let time = 60
+        this.$message.success('验证码已发送');
+        const timer = setInterval(()=>{
+          time--
+          this.time = time
+          if(time === 0){
+            clearInterval(timer)
+            this.time = '获取'
+            this.btndisabled = false
+          }
+        },1000)
+        const userName = {user_name:this.registerInfo.username}
+        await sendMsg(userName).then(res=>{
+          if(res.data.code==200){
+            this.$message.success(res.data.message);
+          }else{
+            this.$message.error(res.data.message);
+          }
+        })
       }
     }
 }
@@ -192,6 +233,7 @@ export default {
   .box{
     width: 100%;
     height: 100%;
+    min-width: 1200px;
     .txt-left-sid{
       .el-form{
         width: 100%;
@@ -202,6 +244,19 @@ export default {
         .el-form-item{
           width: 100%;
         }
+
+      }
+    }
+    .getCode{
+      &:hover{
+        cursor: pointer;
+        color: rgb(0, 119, 255);
+      }
+    }
+    .code{
+      ::v-deep .el-form-item__content {
+        margin-left: 0 !important;
+        width: calc(100% - 115px);
       }
     }
   }

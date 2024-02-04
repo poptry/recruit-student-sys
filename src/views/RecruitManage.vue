@@ -155,6 +155,7 @@ import {getRecruitInfo,addRecruitInfo,deleteRecruitInfo,updateRecruitInfo,findRe
 import VDistpicker from 'v-distpicker'
 import {formatDateTime} from '@/util/tools.js'
 import {highlight} from '@/util/highllight.js'
+import jsCookie from 'js-cookie'
 export default {
   data() {
     return {
@@ -185,8 +186,8 @@ export default {
         'url':''
       },
       region:{
-          province:'',
-          city:''
+        province:'',
+        city:''
       },
       rules:{
         proInfo:[{ required: true, message: '产品信息必填', trigger: 'blur' }],
@@ -272,12 +273,15 @@ export default {
     },
     //搜索按钮事件
     async subSearch(){
+      const user_id = jsCookie.get('userId')
       await normalSearch({
         name:'title',
-        key:this.searchContent
+        key:this.searchContent,
+        user_id:user_id
       }).then(res=>{
+        console.log(res);
         if(res.data.code == '200'){
-          this.tableData = res.data.data
+          this.tableData = res.data.data.documentList
           this.tableData.forEach(ele=>{
             ele.date = formatDateTime(ele.date)
             ele.title = highlight(ele.title,this.searchContent)

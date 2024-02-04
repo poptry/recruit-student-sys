@@ -22,15 +22,30 @@
             <a href="#/advancedSearch" target="_blank" style="text-decoration: none;" class="advanced">高级检索</a>
         </div>
     </div>
-    <result-table :tableData="tableData"></result-table>
+    <div class="bottom">
+        <div class="result">
+            <result-table :tableData="tableData"></result-table>
+        </div>
+        <div class="relate">
+            <div class="recommend">
+                <span class="title"><i class="el-icon-search"></i>相关搜索</span>
+                <div class="itemUrl" v-for="(item,index) in relatedList" :key="index" @click="clickRelateLink(item)">
+                    <span style="margin-right: 10px;">{{ item.label }}</span>
+                    <span>{{ item.search_key }}</span>
+                </div>
+            </div>
+        </div>
+    </div>
   </div>
 </template>
 
 <script>
 import ResultTable from '@/components/ResultTable.vue'
 import {formatDateTime} from '@/util/tools.js'
+import jsCookie from 'js-cookie'
 import {normalSearch} from '@/api'
 import {highlight} from '@/util/highllight.js'
+import { mapMutations } from 'vuex'
 export default {
     data(){
         return{
@@ -38,35 +53,36 @@ export default {
             select:'title',
             options:[
                 {
-                value:'title',
-                label:'标题'
+                    value:'title',
+                    label:'标题'
                 },
                 {
-                value:'content',
-                label:'全文'
+                    value:'content',
+                    label:'全文'
                 },
                 {
-                value:'province',
-                label:'省份'
+                    value:'province',
+                    label:'省份'
                 },
                 {
-                value:'city',
-                label:'城市'
+                    value:'city',
+                    label:'城市'
                 },
                 {
-                value:'school',
-                label:'学校'
+                    value:'school',
+                    label:'学校'
                 },
                 {
-                value:'specialized',
-                label:'专业'
+                    value:'specialized',
+                    label:'专业'
                 },
                 {
-                value:'academy',
-                label:'学院'
+                    value:'academy',
+                    label:'学院'
                 }
             ],
-            tableData:[]
+            tableData:[],
+            relatedList:[]
         }
     },
     components:{ResultTable},
@@ -82,21 +98,38 @@ export default {
         },
     },
     methods:{
+        ...mapMutations('table',['isLoading']),
         async searchMethod(){
+            const user_id = jsCookie.get('userId')
+            this.isLoading(true)
             await normalSearch({
                 name:this.select,
-                key:this.input
+                key:this.input,
+                user_id:user_id
             }).then(res=>{
                 if(res.data.code == '200'){
-                    this.tableData = res.data.data
+                    this.tableData = res.data.data.documentList
                     this.tableData.forEach(ele=>{
                         ele.date = formatDateTime(ele.date)
                         ele[this.select] = highlight(ele[this.select],this.input)
                     })
+                    this.relatedList = res.data.data.searchRecordList
+                    for(let i = 0 ; i < this.relatedList.length ; i++){
+                        for(let j = 0; j<this.options.length ; j++){
+                            if(this.options[j].value == this.relatedList[i].search_type){
+                                this.relatedList[i].label = this.options[j].label
+                            }
+                        }
+                    }
+                    console.log(this.relatedList);
                 }else if(res.data.code == '400'){
                     this.tableData = []
                 }
+                this.isLoading(false)
             })
+        },
+        clickRelateLink(item){
+            this.$router.replace({path:'/searchResult',query:{input:item.search_key,select:item.search_type}}).catch(err=>err)
         }
     },
 }
@@ -152,6 +185,40 @@ export default {
                     border: none !important;
                     font-size: 16px;
                     border-radius: 0;
+                }
+            }
+        }
+        .bottom{
+            width: 100%;
+            display: flex;
+            .result{
+                width: 80%;
+            }
+            .relate{
+                width: 20%;
+                .recommend{
+                    position: fixed;
+                    top: 45%;
+                    right: 0;
+                    width: 20%;
+                    box-shadow: 0 0 3px rgb(191, 191, 191);
+                    padding: 10px;
+                    .title{
+                        font-size: 18px;
+                        font-weight: 600;
+                        color: #333;
+                    }
+                    .itemUrl{
+                        color: rgba(00, 00, 00, 0.8);
+                        padding: 5px;
+                        border-bottom: 1px solid #c0c0c0;
+                        text-align: center;
+                        &:hover{
+                            text-decoration: underline;
+                            cursor: pointer;
+                            color: blue;
+                        }
+                    }
                 }
             }
         }

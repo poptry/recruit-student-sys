@@ -4,6 +4,7 @@ import 'element-ui/lib/theme-chalk/index.css';
 import ElementUI from 'element-ui'
 import './assets/iconfont/iconfont.css'
 import store from './store';
+import 'animate.css'
 import router from './router'//引入router from './router
 //引入cookie
 import Cookie from 'js-cookie';

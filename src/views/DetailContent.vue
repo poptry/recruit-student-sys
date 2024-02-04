@@ -12,7 +12,7 @@
         </div>
         <div class="relate">
             <div><span>{{ info.date }}</span></div>
-            <div>地区：<span>{{ info.city }}</span></div>
+            <div>地区：<span>{{ `${info.province}` + `${info.city}` }}</span></div>
             <div>学校：<span class="red">{{ info.school }}</span></div>
             <div>学院：<span>{{ info.academy }}</span></div>
             <div>类型：<span class="red">{{ info.type }}</span></div>
@@ -28,11 +28,13 @@
 <script>
 import {addCollect} from '@/api'
 import Cookies from 'js-cookie'
+import {recruitInfoDetails} from '@/api'
+import {formatDateTime} from '@/util/tools.js'
 export default {
     data(){
         return{
             info:{},
-            isCollect:false,
+            isCollect:false
         }
     },
     methods:{
@@ -62,12 +64,16 @@ export default {
                     });
                 }
             })
-        }
+        },
     },
     mounted(){
         const info = JSON.parse(this.$route.query.info)
-        this.info = info
-        console.log(this.info);
+        recruitInfoDetails({document_id:info.document_id}).then(res=>{
+            if(res.data.code == "200"){
+                this.info = res.data.data
+                this.info.date = formatDateTime(this.info.date)
+            }
+        })
     }
 }
 </script>

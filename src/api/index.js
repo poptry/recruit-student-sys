@@ -30,6 +30,10 @@ export const normalSearch = (data)=>{
 export const advancedSearch = (data)=>{
     return http.post('/esSearch/plusSearch',data)
 }
+//recruitInfoDetails
+export const recruitInfoDetails = (data)=>{
+    return http.post('/recruit/recruitInfoDetails',data)
+}
 
 
 //个人中心管理
@@ -52,4 +56,19 @@ export const updateRecruitInfo = (data)=>{
 //搜索招生信息->关键词检索
 export const findRecruitInfo = (data)=>{
     return http.post('/recruit/findRecruitInfo',data)
+}
+
+//用户管理
+export const getUserList = (data)=>{
+    return http.post('/user/listUser',data)
+}
+export const updateUser = (data)=>{
+    return http.post('/user/updateUser',data)
+}
+export const deleteUser = (data)=>{
+    return http.post('/user/deleteUser',data)
+}
+//注册
+export const sendMsg = (data)=>{
+    return http.post('/user/sendMsg',data)
 }
