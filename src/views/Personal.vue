@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <el-container>
+    <el-container v-if="!isVisitor">
         <el-aside width="200px">
             <common-aside></common-aside>
         </el-aside>
@@ -8,19 +8,37 @@
             <router-view></router-view>
         </el-main>
     </el-container>
+    <div v-if="isVisitor" class="showVisitor">
+      <div class="noLogined">
+        <div class="toLogin">个性化推荐，请先<span @click="toLogin">登录</span></div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
+import Cookies from 'js-cookie'
 import CommonAside from '@/components/CommonAside.vue';
 export default {
     data(){
         return {
-
+            isVisitor:false
         }
     },
     components:{
         CommonAside
+    },
+    methods:{
+        //前往登录界面
+        toLogin(){
+            this.$router.push('login')
+        }
+    },
+    created(){
+        const identity = Cookies.get('identity')
+        if(identity == 'visitor'){
+            this.isVisitor = true
+        }
     }
 }
 </script>
@@ -29,13 +47,12 @@ export default {
     .container{
         width: 100%;
         height: 100%;
-
         .el-container{
             width: 100%;
             height: 100%;
-            
             ::v-deep .el-aside,.el-main{
                 padding: 0;
+                height: 100%;
                 .el-menu{
                     height: 100%;
                     width: 100%;
@@ -46,6 +63,31 @@ export default {
             ::v-deep .el-main{
                 padding: 20px;
             }
+        }
+    }
+    .showVisitor{
+        width: 100%;
+        height: 100%;
+        .noLogined{
+        width: 100%;
+        height: 100%;
+        .toLogin{
+            display: block;
+            width: 30%;
+            text-align: center;
+            border: 0;
+            background-color: #fff;
+            height: 60px;
+            margin: 300px auto;
+            color: rgba(00, 00, 00, 0.6);
+            span{
+            text-decoration: underline;
+            color: #0076dd;
+            &:hover{
+                cursor: pointer;
+            }
+            }
+        }
         }
     }
 </style>

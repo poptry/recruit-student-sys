@@ -25,11 +25,9 @@ const routes = [
             {
                 path:'personal',
                 component:Personal,
+                name:'personal',
                 children:[
-                    {path:'/',redirect:'userManage'},//我的信息
-                    {path:'userManage',component:UserManage,name:'userManage'},
-                    {path:'collectManage',component:CollectManage,name:'collectManage'},
-                    {path:'recruitManage',component:RecruitManage,name:'recruitManage'},
+
                 ]
             },
             {path:'detailContent',component:DetailContent,name:'detailContent'},

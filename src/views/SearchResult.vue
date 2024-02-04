@@ -121,7 +121,6 @@ export default {
                             }
                         }
                     }
-                    console.log(this.relatedList);
                 }else if(res.data.code == '400'){
                     this.tableData = []
                 }

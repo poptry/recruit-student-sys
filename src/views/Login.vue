@@ -1,9 +1,7 @@
 <template>
   <div class="box">
     <h1 class="error">招 生 信 息 检 索 系 统</h1>
-	<!---728x90--->
     <div class="w3layouts-two-grids">
-	<!---728x90--->
         <div class="mid-class">
             <div class="img-right-side">
                 <img src="@/assets/images/login.jpg" class="img-fluid" alt="">
@@ -18,16 +16,19 @@
                   <el-form-item label="密码" prop="password">
                       <el-input type="password" v-model="form.password" placeholder="请输入密码"></el-input>
                   </el-form-item>
-                  <el-form-item>
-                    <el-radio-group v-model="form.identity">
-                      <el-radio label="游客"></el-radio>
-                      <el-radio label="用户"></el-radio>
-                      <el-radio label="管理员"></el-radio>
-                    </el-radio-group>
-                  </el-form-item>
-                  <el-form-item>
+                  <el-row>
+                      <el-form-item>
+                        <el-radio-group v-model="form.identity">
+                          <el-radio label="游客"></el-radio>
+                          <el-radio label="用户"></el-radio>
+                        </el-radio-group>
+                      </el-form-item>
+                    </el-row>
+                  <el-row>
+                    <el-form-item>
                       <el-button  type="primary" class="login" @click="submit">登录</el-button>
-                  </el-form-item>
+                    </el-form-item>
+                  </el-row>
                 </el-form>
                 <div class="w3layouts_more-buttn">
                     <h3 style="color: rgb(71, 135, 247);cursor: pointer;" @click="toRegister">注册账号</h3>
@@ -44,18 +45,8 @@
                   <el-form-item  label="手机号" prop="userphone">
                       <el-input v-model="registerInfo.userphone" placeholder="请输入手机号"></el-input>
                   </el-form-item>
-                  <!-- <el-form-item  label="验证码" prop="usercode">
-                    <el-row>
-                      <el-col :span="16">
-                        <el-input style="width:100%" v-model="registerInfo.usercode" placeholder="请输入验证码"></el-input>
-                      </el-col>
-                      <el-col :span="6">
-                        <span style="width: 100%;" class="getCode" @click="getCode">{{time}}</span>
-                      </el-col>
-                    </el-row>
-                  </el-form-item> -->
-                  <el-form-item class="code"  label="验证码" prop="usercode">
-                    <el-input style="width:100%" v-model="registerInfo.usercode" placeholder="请输入验证码">
+                  <el-form-item class="code"  label="验证码" prop="code">
+                    <el-input style="width:100%" v-model="registerInfo.code" placeholder="请输入验证码">
                       <el-button  class="getCode" @click="getCode" slot="append">{{time}}</el-button>
                     </el-input>
                   </el-form-item>
@@ -84,7 +75,7 @@ import Cookie from 'js-cookie'
 import '@/assets/css/login.css'
 import {userLogin,userRegister,check} from '@/api'
 import { mapMutations } from 'vuex'
-import {sendMsg} from '@/api'
+import {sendMsg,registerUser} from '@/api'
 export default {
   data() {
     var checkPassword = (rule, value, callback) => {
@@ -106,14 +97,14 @@ export default {
               username:[{required:true,message: '请输入用户名', trigger: 'blur' }],
               password:[{required:true,message: '请输入密码', trigger: 'blur' }],
               userphone:[{required:true,message: '请输入手机号', trigger: 'blur' }],
-              usercode:[{required:true,message: '请输入验证码', trigger: 'blur' }],
+              code:[{required:true,message: '请输入验证码', trigger: 'blur' }],
               repassword:[{validator: checkPassword, trigger: 'blur'}],
           },
           registerInfo:{
               username: '',
               password: '',
               userphone: '',
-              usercode: '',
+              code: '',
               repassword:''
           },
           btndisabled:false,
@@ -124,6 +115,7 @@ export default {
     },
     methods:{
       ...mapMutations('user',['getIsVisitor']),
+      ...mapMutations('table',['setMenu','addMenu']),
       randomNum(){
         return Math.floor(10000 + Math.random() * 90000);
       },
@@ -135,25 +127,25 @@ export default {
           //存储在Vuex
           this.getIsVisitor(true)
           this.$router.push('home')
+          this.setMenu('')
         }
         //校验通过
         this.$refs.form.validate((valid)=>{
           //校验通过
           if(valid){
             userLogin(this.form).then(({data})=>{
-              console.log(data);
               // 判断code是不是20000
               if(data.code == '200'){
-                  Cookie.set('token',data.data.token)
-                  Cookie.set('username',this.form.username)
-                  Cookie.set('userId',data.data.userId)
-                  //如果有游客cookie清楚掉
-                  Cookie.remove('identity')
-                  //获取菜单的数据，存入store
-                  // this.$store.commit('setMenu',data.data.menu)
-                  // this.$store.commit('addMenu',this.$router)
-                    //跳转到首页
-                    this.$router.push('/home')
+                Cookie.set('token',data.data.token)
+                Cookie.set('username',this.form.username)
+                Cookie.set('userId',data.data.userId)
+                //如果有游客cookie清楚掉
+                Cookie.remove('identity')
+                //获取菜单的数据，存入store
+                this.setMenu(data.data.sysPermissionList)
+                this.addMenu(this.$router)
+                //跳转到首页
+                this.$router.push('/home')
               }else {
                   this.$message.error(data.msg);
               }
@@ -172,8 +164,12 @@ export default {
         this.$refs.registerInfo.validate((valid)=>{
           //校验通过
           if(valid){
-            userRegister(this.registerInfo).then(({data})=>{
-              console.log(data);
+            registerUser(this.registerInfo).then(({data})=>{
+              if(data.code == "200"){
+                this.$message.success('注册成功');
+              }
+              this.$refs.registerInfo.resetFields();
+              this.registerState = false
             })
           }
         })
@@ -201,8 +197,8 @@ export default {
       async getCode(){
         //验证手机号格式
         if(!(/^1[3456789]\d{9}$/.test(this.registerInfo.userphone))){
-            this.$message.error('请输入正确的手机号');
-            return false;
+          this.$message.error('请输入正确的手机号');
+          return false;
         }
         this.btndisabled = true
         let time = 60
@@ -218,11 +214,6 @@ export default {
         },1000)
         const userName = {user_name:this.registerInfo.username}
         await sendMsg(userName).then(res=>{
-          if(res.data.code==200){
-            this.$message.success(res.data.message);
-          }else{
-            this.$message.error(res.data.message);
-          }
         })
       }
     }

@@ -3,7 +3,7 @@ import Cookies from "js-cookie";
 const http = axios.create({
     //通用请求地址，请求前缀
     baseURL: '/api',
-    timeout: 2000,//10秒超时
+    timeout: 20000,//10秒超时
 })
 // 添加请求拦截器
 http.interceptors.request.use(function (config) {

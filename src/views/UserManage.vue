@@ -9,7 +9,6 @@
         </div>
       </el-col>
     </el-row>
-    <!-- 产品表 -->
     <el-table
       v-loading="loading"
       @select="selectTable"
@@ -27,6 +26,11 @@
           prop="username"
           align="center"
           label="用户名">
+      </el-table-column>
+      <el-table-column
+          prop="province"
+          align="center"
+          label="省份">
       </el-table-column>
       <el-table-column
           prop="city"
@@ -154,7 +158,6 @@ export default {
       await getUserList().then(res=>{
         if(res.data.code == "200"){
           this.tableData = res.data.data
-          console.log(JSON.stringify(this.tableData));
         }
       })
     },

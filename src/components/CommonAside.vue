@@ -16,24 +16,26 @@
 </template>
 
 <script>
+import Cookie from 'js-cookie'
+import { mapState } from 'vuex'
 export default {
     data(){
         return{
-            menu:[
-                {label:'用户管理',path:'userManage'},
-                {label:'招生信息管理',path:'recruitManage'},
-                {label:'个人信息',path:'pernalInfo'},
-                {label:'收藏管理',path:'collectManage'},
-            ]
         }
+    },
+    computed:{
+        ...mapState('table',['menu']),
+        menu(){
+            //如果缓存中没有，从store中获取
+            return Cookie.get('menu') ? JSON.parse(Cookie.get('menu')) : this.menu
+        },
     },
     methods:{
         clickMenu(item){
-            this.$router.push(`${item.path}`).catch(err=>err)
+            this.$router.push(`/personal/${item.path}`).catch(err=>err)
         },
     },
     created(){
-
     }
 }
 </script>

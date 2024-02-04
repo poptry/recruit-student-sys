@@ -72,3 +72,6 @@ export const deleteUser = (data)=>{
 export const sendMsg = (data)=>{
     return http.post('/user/sendMsg',data)
 }
+export const registerUser = (data)=>{
+    return http.post('/user/register',data)
+}

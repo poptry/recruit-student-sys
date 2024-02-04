@@ -43,11 +43,10 @@ export default {
         //下拉菜单事件
         handleCommand(command){
             if(command == 1){
-                this.$router.push('personal')
+                this.$router.push('personal').catch(err=>err)
             }else if(command == 2){
-                Cookie.remove('username')
                 Cookie.remove('token')
-                this.$router.push('/login')
+                this.$router.push('/login').catch(err=>err)
             }
         },
         toHome(){

@@ -228,7 +228,6 @@ export default {
         type: 'warning'
       }).then(async ()=>{
         deleteRecruitInfo({document_id:row.document_id}).then((response)=>{
-          console.log(response);
           if(response.data.code === "200"){
             this.getRecruitInfoList()
             this.$message({
@@ -279,7 +278,6 @@ export default {
         key:this.searchContent,
         user_id:user_id
       }).then(res=>{
-        console.log(res);
         if(res.data.code == '200'){
           this.tableData = res.data.data.documentList
           this.tableData.forEach(ele=>{
