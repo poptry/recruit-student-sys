@@ -64,10 +64,6 @@ export default {
           label:'学校'
         },
         {
-          value:'specialized',
-          label:'专业'
-        },
-        {
           value:'academy',
           label:'学院'
         }

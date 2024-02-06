@@ -8,7 +8,7 @@
 
 <script>
 import CommonItem from '@/components/CommonItem.vue'
-export default {
+export default {    
     data(){
         return{
             collectList:null

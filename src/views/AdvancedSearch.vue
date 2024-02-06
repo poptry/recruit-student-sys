@@ -12,9 +12,6 @@
             <el-form-item prop="academy"  label="学院">
                 <el-input v-model="conditions.academy"></el-input>
             </el-form-item>
-            <el-form-item prop="specialized" label="专业">
-                <el-input v-model="conditions.specialized"></el-input>
-            </el-form-item>
             <el-form-item prop="type" label="类型">
                 <el-select v-model="conditions.type" placeholder="请选择类型">
                     <el-option label="本科生" value="本科生"></el-option>
@@ -52,7 +49,6 @@ export default {
             academy:'',
             city:'',
             school:'',
-            specialized:'',
             title:'',
             type:'',
             content:'',
