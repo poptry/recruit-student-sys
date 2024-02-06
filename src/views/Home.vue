@@ -35,7 +35,7 @@
 
 <script>
 import Cookies from 'js-cookie'
-import {getRecommandInfo} from '@/api'
+import {getRecommandInfo,regionRecommend} from '@/api'
 import {formatDateTime} from '@/util/tools.js'
 export default {
   data(){
@@ -105,6 +105,9 @@ export default {
     }else{
       this.isVisitor = true
     }
+    regionRecommend().then(res=>{
+      console.log(res);
+    })
   }
 }
 </script>

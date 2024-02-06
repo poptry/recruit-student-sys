@@ -13,6 +13,10 @@ export const check = (data)=>{
 export const getRecommandInfo = (data)=>{
     return http.post('/recruit/recommend/infoList',data)
 }
+//本地推荐
+export const regionRecommend = (data)=>{
+    return http.post('/esSearch/regionRecommend',data)
+}
 //获取收藏列表
 export const getCollectInfo = (data)=>{
     return http.post('/collect/collectList',data)

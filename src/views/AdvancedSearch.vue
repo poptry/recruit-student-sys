@@ -4,7 +4,7 @@
         <span class="tableTitle">检索条件</span>
         <el-form ref="conditions" :model="conditions" label-width="60px">
             <el-form-item   label="地区">
-                <v-distpicker :province="region.province" :city="region.city"  @change="onChange" hide-area></v-distpicker>
+                <v-distpicker :province="region.province" :city="region.city" @province="onChangeProvince" @city="onChangeCity" hide-area></v-distpicker>
             </el-form-item>
             <el-form-item prop="school" label="学校">
                 <el-input v-model="conditions.school"></el-input>
@@ -71,12 +71,19 @@ methods:{
             city:''
         }
     },
+    onChangeProvince(data){
+        console.log(data);
+        if(data.value!="省"){
+            this.region.province = data.value
+        }
+      },    
+      onChangeCity(data){
+        if(data.value!="市"){
+            this.region.city = data.value
+        }
+      },
     //地址选择
     onChange(data){
-        if(data.province.value!="省"&&data.city.value!="市"){
-            this.region.province = data.province.value
-            this.region.city = data.city.value
-        }
     },
     //搜索
     submit(){
