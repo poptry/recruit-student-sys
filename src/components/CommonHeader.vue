@@ -46,6 +46,7 @@ export default {
                 this.$router.push('personal').catch(err=>err)
             }else if(command == 2){
                 Cookie.remove('token')
+                Cookie.remove('userId')
                 this.$router.push('/login').catch(err=>err)
             }
         },

@@ -34,7 +34,8 @@ export default {
     data(){
         return{
             info:{},
-            isCollect:false
+            isCollect:false,
+            showCollect:true
         }
     },
     methods:{
@@ -65,6 +66,12 @@ export default {
                 }
             })
         },
+    },
+    created(){
+        const identity = Cookies.get('identity')
+        if(identity && identity == 'visitor'){
+            this.showCollect = false
+        }
     },
     mounted(){
         const info = JSON.parse(this.$route.query.info)

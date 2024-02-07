@@ -12,7 +12,6 @@
         </div>
       </el-col>
     </el-row>
-    <!-- 产品表 -->
     <el-table
       :data="tableData.slice((paging.currentPage-1)*paging.pagesize,paging.currentPage*paging.pagesize)"
       stripe>
@@ -109,7 +108,7 @@
           <el-input v-model="recruitInfo.title" placeholder="请输入标题"></el-input>
         </el-form-item>
         <el-form-item label="来源" prop="url">
-          <el-input v-model="recruitInfo.url" placeholder="学校"></el-input>
+          <el-input v-model="recruitInfo.url" placeholder="来源"></el-input>
         </el-form-item>
         <el-form-item label="学校" prop="school">
           <el-input v-model="recruitInfo.school" placeholder="学校"></el-input>

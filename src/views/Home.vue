@@ -14,7 +14,14 @@
       </el-input>
       <span  class="advanced-search" @click="toAdvancedSearch">高级检索></span>
     </div>
-    <div v-if="!isVisitor" class="recommand">
+    <span  v-if="!isVisitor" class="rec-title">地区推荐</span>
+    <div v-if="!isVisitor" class="recommandByRegion">
+      <div v-for="(item,index) in recommandByRegionInfo" :key="index" class="every-item">
+        <span @click="toDetail(item)">{{ item.title }}</span>
+      </div>
+    </div>
+    <span  v-if="!isVisitor" class="rec-title">个性推荐</span>
+    <div v-if="!isVisitor" id="recommand" class="recommand">
       <div v-for="(r,index) in recommandInfo" :key="index" class="card animate__animated animate__zoomIn" @click="toDetail(r)">
         <h3>{{ r.title}}</h3>
         <p class="content">{{ r.content }}</p>
@@ -35,6 +42,7 @@
 
 <script>
 import Cookies from 'js-cookie'
+import { Loading } from 'element-ui';
 import {getRecommandInfo,regionRecommend} from '@/api'
 import {formatDateTime} from '@/util/tools.js'
 export default {
@@ -69,6 +77,7 @@ export default {
         }
       ],
       recommandInfo:[],
+      recommandByRegionInfo:[],
       isVisitor:false
     }
   },
@@ -90,92 +99,132 @@ export default {
       this.$router.push('login')
     }
   },
-  created(){
+  async created(){
     const userId = Cookies.get('userId')
     const identity = Cookies.get('identity')
     if(identity != 'visitor'){
       this.isVisitor = false
       //获取推荐
-      getRecommandInfo({user_id:userId}).then((data)=>{
-        this.recommandInfo = data.data.data
-        this.recommandInfo.forEach(ele=>{
-          ele.date = formatDateTime(ele.date)
-        })
+      let loadingInstance = Loading.service(); //开始加载
+      await getRecommandInfo({user_id:userId}).then((data)=>{
+        if(data.data.code == '200'){
+          this.recommandInfo = data.data.data
+          this.recommandInfo.forEach(ele=>{
+            ele.date = formatDateTime(ele.date)
+          })
+        }
       })
+      //获取地区推荐
+      await regionRecommend().then(res=>{
+        console.log(res);
+        if(res.data.code == '200'){
+          this.recommandByRegionInfo = res.data.data
+          console.log(this.recommandByRegionInfo);
+        }
+      })
+      this.$nextTick(() => {
+        loadingInstance.close();
+      });
     }else{
       this.isVisitor = true
     }
-    regionRecommend().then(res=>{
-      console.log(res);
-    })
+
   }
 }
 </script>
 
 <style lang="less" scoped>
   .contain{
-    position: relative;
     width: 100%;
     height: 100%;
     margin-top: 40px;
   }
+  .rec-title{
+    left: 100px;
+    margin: 20px 0;
+    margin-left: 30px;
+    display: block;
+    color: #808080;
+  }
   .recommand{
     width: 100%;
-    position: absolute;
-    top: 200px;
     display: flex;
     justify-content: flex-start;
     flex-wrap: wrap;
-      .card{
-        position: relative;
-        width: 20%;
-        height: 250px;
-        min-width: 215px;
-        margin: 0 calc(20%/4/2) 20px calc(20%/4/2) ;
-        user-select: none;
-        background-color: #ffffff;
-        border-radius: 5px;
-        box-shadow: 0 0  20px rgba(0, 0, 0, .5);
+    .card{
+      position: relative;
+      width: 20%;
+      height: 250px;
+      min-width: 215px;
+      margin: 0 calc(20%/4/2) 20px calc(20%/4/2) ;
+      user-select: none;
+      background-color: #ffffff;
+      border-radius: 5px;
+      box-shadow: 0 0  15px rgba(0, 0, 0, .5);
+      padding: 10px;
+      &:hover{
+        cursor: pointer;
+        box-shadow: 8px 8px  20px rgba(0, 0, 0, .5);
+      }
+      h3{
+        white-space: nowrap;        /* 防止文本换行 */
+        overflow: hidden;           /* 隐藏超出范围的部分 */
+        text-overflow: ellipsis;  /* 显示省略号 */
+        text-align: center;
         padding: 10px;
-        &:hover{
-          cursor: pointer;
-          box-shadow: 8px 8px  20px rgba(0, 0, 0, .5);
-        }
-        h3{
-          white-space: nowrap;        /* 防止文本换行 */
-          overflow: hidden;           /* 隐藏超出范围的部分 */
-          text-overflow: ellipsis;  /* 显示省略号 */
-          text-align: center;
-          padding: 10px;
-          margin-bottom: 10px;
-        }
-        .content{
-          display: -webkit-box;
-          -webkit-line-clamp: 3;  /* 设置固定的行数 */
-          -webkit-box-orient: vertical;
-          overflow: hidden;
-          margin-bottom: 10px;
-        }
-        .iconfont{
-          color: #0470ce;
-          margin-right: 5px;
-        }
-        .time{
-          position: absolute;
-          color: #3c3c3c;
-          font-size: 12px;
-          bottom: 10px;
-          right: 10px;
-        }
-        .city{
-          position: absolute;
-          color: #0076dd;
-          font-size: 12px;
-          bottom: 10px;
-          left: 10px;
-        }
+        margin-bottom: 10px;
+      }
+      .content{
+        display: -webkit-box;
+        -webkit-line-clamp: 3;  /* 设置固定的行数 */
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+      .iconfont{
+        color: #0470ce;
+        margin-right: 5px;
+      }
+      .time{
+        position: absolute;
+        color: #3c3c3c;
+        font-size: 12px;
+        bottom: 10px;
+        right: 10px;
+      }
+      .city{
+        position: absolute;
+        color: #0076dd;
+        font-size: 12px;
+        bottom: 10px;
+        left: 10px;
       }
     }
+  }
+  .recommandByRegion{
+    width: 95%;
+    padding: 20px;
+    box-shadow: 0 0  15px rgba(0, 0, 0, .5);
+    margin: 0 auto;
+    display: flex;
+    flex-wrap: wrap;
+    .every-item{
+      width: 30%;
+      margin:5px calc(10% / 3 / 2);
+      border-bottom: 1px dotted #a0a0a0;
+    }
+    span{
+      display: inline-block;
+      width: 100%;
+      overflow: hidden; 
+      white-space: nowrap; 
+      text-overflow: ellipsis;
+      &:hover{
+        color: #34a0ff;
+        cursor: pointer;
+      }
+    }
+  }
   .search{
     position: relative;
     width: 100%;
