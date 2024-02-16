@@ -16,7 +16,7 @@
       stripe
       :border="true"
       :data="tableData.slice((paging.currentPage-1)*paging.pagesize,paging.currentPage*paging.pagesize)"
-      height="500">
+      >
       <el-table-column
           prop="user_id"
           align="center"
@@ -147,7 +147,9 @@ export default {
         "auth":""
       },
       rules:{
-        proInfo:[{ required: true, message: '产品信息必填', trigger: 'blur' }],
+        username:[{ required: true, message: '请输入用户名', trigger: 'blur' }],
+        password:[{required:true,message: '请输入密码', trigger: 'blur' }],
+        phonenum:[{required:true,message: '请输入手机号', trigger: 'blur' }],
       }
     }
   },
@@ -234,6 +236,9 @@ export default {
     submit(){
       this.$refs.userList.validate((valid) => {
         if (valid) {
+          this.userList.province = this.region.province
+          this.userList.city = this.region.city
+          console.log(this.userList)
           updateUser(this.userList).then((response)=>{
               if(response.data.code == "200"){
                 this.getUsers()

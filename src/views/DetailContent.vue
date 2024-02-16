@@ -2,9 +2,10 @@
   <div class="container">
     <el-row class="top">
         <el-col :span="12"> <span class="back" style="user-select: none;" @click="goback">&lt; 返回</span> </el-col>
-        <el-col :span="12" class="collect">
-            <i style="font-size: 20px;" :class="{ 'el-icon-star-on': isCollect, 'el-icon-star-off': !isCollect }"  @click="collect"></i>
-            <span  @click="collect" style="user-select: none;"> 收藏</span> </el-col>
+        <el-col :span="12" class="collect" v-if="showCollect">
+            <i style="font-size: 20px;color: orange;" :class="{ 'el-icon-star-on': isCollect, 'el-icon-star-off': !isCollect }"  @click="collect"></i>
+            <span  @click="collect" style="user-select: none;"> 收藏</span> 
+        </el-col>
     </el-row>
     <div class="article">
         <div class="title">
@@ -43,6 +44,7 @@ export default {
             this.$router.go(-1)
         },
         collect(){
+            this.isCollect = true
             const user_id = Cookies.get('userId')
             const obj = {
                 document_id:this.info.document_id,
@@ -75,9 +77,11 @@ export default {
     },
     mounted(){
         const info = JSON.parse(this.$route.query.info)
-        recruitInfoDetails({document_id:info.document_id}).then(res=>{
+        const user_id = Cookies.get('userId')
+        recruitInfoDetails({document_id:info.document_id,user_id:user_id}).then(res=>{
             if(res.data.code == "200"){
                 this.info = res.data.data
+                this.isCollect = res.data.data.isAdd
                 this.info.date = formatDateTime(this.info.date)
             }
         })

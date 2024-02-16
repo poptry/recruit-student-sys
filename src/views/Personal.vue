@@ -1,5 +1,8 @@
 <template>
   <div class="container">
+    <el-row class="top">
+        <el-col :span="24"> <span class="back" style="user-select: none;" @click="goback">&lt; 返回</span> </el-col>
+    </el-row>
     <el-container v-if="!isVisitor">
         <el-aside width="200px">
             <common-aside></common-aside>
@@ -32,7 +35,10 @@ export default {
         //前往登录界面
         toLogin(){
             this.$router.push('login')
-        }
+        },
+        goback(){
+            this.$router.go(-1)
+        },
     },
     created(){
         const identity = Cookies.get('identity')
@@ -62,6 +68,19 @@ export default {
             }
             ::v-deep .el-main{
                 padding: 20px;
+            }
+        }
+        .top{
+            margin-top: 8px;
+            padding: 10px;
+            border-bottom: 1px solid #e3e3e3;
+            .back{
+                color: #333;
+                &:hover{
+                    color: #007bff;
+ 
+                    cursor: pointer;
+                }
             }
         }
     }
