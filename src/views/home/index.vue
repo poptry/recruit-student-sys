@@ -23,6 +23,7 @@ const count = ref(0)
 <style lang="scss" scoped>
 .container-fluid{
   height: 100%;
+  width: auto;
   .row{
     height: 100%;
   }
